@@ -4,6 +4,10 @@ DROP TABLE IF EXISTS
     BundleFaixa, Licenca, Produto, ProdutoLicenciado, Compra, CompraProduto
 CASCADE;
 
+DROP TYPE IF EXISTS 
+	servicos, sexos, tipos, formas_pagamento 
+CASCADE;
+
 
 -- Usuário
 
@@ -56,7 +60,7 @@ CREATE TABLE Formacao (
     inicio      DATE NOT NULL,
     fim         DATE,
 
-    CONSTRAINT Formacao_pk PRIMARY KEY(musico, curso, instatuicao)
+    CONSTRAINT Formacao_pk PRIMARY KEY(musico, curso, instituicao)
 );
 
 CREATE TABLE Portfolio (
@@ -102,8 +106,8 @@ CREATE TYPE sexos AS ENUM('homem', 'mulher');
 
 CREATE TABLE PrestadorServico (
     musico INTEGER PRIMARY KEY REFERENCES Musico(usuario) ON DELETE CASCADE,
-    preco_medio NUMERIC(10, 2)
-    sexo sexos,
+    preco_medio NUMERIC(10, 2),
+    sexo sexos
 );
 
 CREATE TABLE SoftwareMixagem (
@@ -189,51 +193,85 @@ CREATE TABLE Produto (
 );
 
 CREATE TABLE ProdutoLicenciado (
-
+    licenca VARCHAR(30) REFERENCES Licenca(nome),
+    produto INTEGER REFERENCES Produto(codigo),
+    
+    CONSTRAINT PK_ProdutoLicenciado PRIMARY KEY(licenca, produto)
 );
 
 
 -- Faixa de Áudio
 
 CREATE TABLE FaixaAudio (
-
+    produto SERIAL PRIMARY KEY,
+    contrato INTEGER REFERENCES Contrato(id) NOT NULL,
+    preco NUMERIC (10, 2) NOT NULL,
+    duracao INTEGER NOT NULL
 );
 
 CREATE TABLE GeneroFaixa (
-
+    faixa_audio INTEGER REFERENCES FaixaAudio(produto),
+    genero VARCHAR(50),
+    
+    CONSTRAINT GeneroFaixa_pk PRIMARY KEY(faixa_audio, genero)
 );
 
-CREATE TABLE IdiomaFaixa (
 
+CREATE TABLE IdiomaFaixa (
+    faixa_audio INTEGER REFERENCES FaixaAudio(produto),
+    idioma VARCHAR(50) NOT NULL,
+    CONSTRAINT IdiomaFaixa_pk PRIMARY KEY(faixa_audio, idioma)
 );
 
 CREATE TABLE InstrumentoFaixa (
-
+    faixa_audio INTEGER REFERENCES FaixaAudio(produto),
+    instrumento VARCHAR(50) NOT NULL,
+    
+    CONSTRAINT InstrumentoFaixa_pk PRIMARY KEY(faixa_audio, instrumento)
 );
-
 
 -- Bundle
 
 CREATE TABLE Bundle (
-
+    produto     SERIAL PRIMARY KEY REFERENCES Produto(codigo),
+    desconto    NUMERIC(5,2),
+    preco_total NUMERIC (10,2) NOT NULL
 );
 
 CREATE TABLE ProdutorBundle (
+    produtor   INTEGER REFERENCES Produtor(musico),
+    bundle     INTEGER REFERENCES Bundle(produto),
 
+    CONSTRAINT ProdutorBundle_pk PRIMARY KEY(produtor, bundle)
 );
 
 CREATE TABLE BundleFaixa (
+    bundle    INTEGER REFERENCES Bundle(produto),
+    faixa_audio    INTEGER REFERENCES FaixaAudio(produto),
 
+    CONSTRAINT BundleFaixa_pk PRIMARY KEY(bundle, faixa_audio)
 );
-
 
 
 -- Compra
+CREATE TYPE formas_pagamento AS ENUM('CREDITO', 'DEBITO', 'PIX');
 
 CREATE TABLE Compra (
-
+    nota_fiscal VARCHAR(44) PRIMARY KEY,
+    comprador INTEGER NOT NULL REFERENCES Usuario(id) ON DELETE SET NULL,
+    "data" TIMESTAMP NOT NULL,
+    forma_pagamento formas_pagamento NOT NULL,
+    valor NUMERIC(10, 2) NOT NULL,
+    avaliacao REAL,
+    comentario TEXT
 );
 
 CREATE TABLE CompraProduto (
-
+    compra VARCHAR(44) REFERENCES Compra(nota_fiscal) ON DELETE CASCADE,
+    licenca VARCHAR(30),
+    produto INTEGER,
+    
+    CONSTRAINT FK_LicencaProduto FOREIGN KEY (licenca, produto) REFERENCES ProdutoLicenciado(licenca, produto),
+    CONSTRAINT PK_CompraProduto UNIQUE(compra, licenca, produto)
 );
+
