@@ -1,12 +1,11 @@
 DROP TABLE IF EXISTS
-    Usuario, Cartao, Administrador, Musico, GeneroMusico, Formacao, Portfolio, Experiencia, Servico, Produtor, PrestadorServico, SoftwareMixagem, SoftwareEdicao,
-    ClasseVoz, IdiomaPrestador, Equipamento, InstrumentoPrestador, Contrato, FaixaAudio, GeneroFaixa, IdiomaFaixa, InstrumentoFaixa, Bundle, ProdutorBundle,
-    BundleFaixa, Licenca, Produto, ProdutoLicenciado, Compra, CompraProduto
+    Usuario, Cartao, Administrador, Musico, Genero_Musico, Formacao, Portfolio, Experiencia, Servico, Produtor, Prestador_Servico, Software_Mixagem, Software_Edicao,
+    Classe_Voz, Idioma_Prestador, Equipamento, Instrumento_Prestador, Contrato, Faixa_Audio, Genero_Faixa, Idioma_Faixa, Instrumento_Faixa, Bundle, Produtor_Bundle,
+    Bundle_Faixa, Licenca, Produto, Produto_Licenciado, Compra, Compra_Produto
 CASCADE;
 
-DROP TYPE IF EXISTS 
-	servicos, sexos, tipos, formas_pagamento 
-CASCADE;
+DROP TYPE IF EXISTS servicos, sexos, classes, tipos, formas CASCADE;
+
 
 
 -- Usuário
@@ -16,16 +15,16 @@ CREATE TABLE Usuario (
     cpf      CHAR(14) NOT NULL UNIQUE CHECK(cpf ~ '^\d{3}\.\d{3}\.\d{3}\-\d{2}$'),
     email    VARCHAR(50) NOT NULL UNIQUE,
     nome     VARCHAR(50) NOT NULL,
-    senha    VARCHAR(20) NOT NULL,
+    senha    VARCHAR(50) NOT NULL,
     endereco VARCHAR(50),
     telefone CHAR(15) CHECK(telefone ~ '^\(\d{2}\) \d{4, 5}\-\d{4}$')
 );
 
 CREATE TABLE Cartao (
     usuario    INTEGER REFERENCES Usuario(id) ON DELETE CASCADE,
-    numero     NUMERIC(3),
-    nome       VARCHAR(50),
-    vencimento DATE CHECK(vencimento > CURRENT_DATE),
+    numero     NUMERIC(16),
+    nome       VARCHAR(50) NOT NULL,
+    vencimento DATE NOT NULL CHECK(vencimento > CURRENT_DATE),
 
     CONSTRAINT Cartao_pk PRIMARY KEY(usuario, numero)
 );
@@ -43,20 +42,20 @@ CREATE TABLE Administrador (
 CREATE TABLE Musico (
     usuario   INTEGER PRIMARY KEY REFERENCES Usuario(id) ON DELETE CASCADE,
     omb       NUMERIC(8) NOT NULL UNIQUE,
-    avaliacao REAL -- TODO
+    avaliacao NUMERIC(3, 2) CHECK(avaliacao BETWEEN 0 AND 5)
 );
 
-CREATE TABLE GeneroMusico (
+CREATE TABLE Genero_Musico (
     musico INTEGER REFERENCES Musico(usuario) ON DELETE CASCADE,
-    genero VARCHAR(20),
+    genero VARCHAR(50),
 
-    CONSTRAINT GeneroMusico_pk PRIMARY KEY(musico, genero)
+    CONSTRAINT Genero_Musico_pk PRIMARY KEY(musico, genero)
 );
 
 CREATE TABLE Formacao (
     musico      INTEGER REFERENCES Musico(usuario) ON DELETE CASCADE,
-    curso       VARCHAR(20),
-    instituicao VARCHAR(20),
+    curso       VARCHAR(50),
+    instituicao VARCHAR(50),
     inicio      DATE NOT NULL,
     fim         DATE,
 
@@ -72,7 +71,7 @@ CREATE TABLE Portfolio (
 
 CREATE TABLE Experiencia (
     musico    INTEGER REFERENCES Musico(usuario) ON DELETE CASCADE,
-    "local"   VARCHAR(30),
+    "local"   VARCHAR(50),
     inicio    DATE CHECK(inicio <= CURRENT_DATE),
     fim       DATE,
     descricao TEXT,
@@ -102,54 +101,56 @@ CREATE TABLE Produtor (
 
 -- Prestador de Serviço
 
-CREATE TYPE sexos AS ENUM('homem', 'mulher');
+CREATE TYPE sexos AS ENUM('Masculino', 'Feminino', 'Outro');
 
-CREATE TABLE PrestadorServico (
+CREATE TABLE Prestador_Servico (
     musico INTEGER PRIMARY KEY REFERENCES Musico(usuario) ON DELETE CASCADE,
-    preco_medio NUMERIC(10, 2),
-    sexo sexos
+    preco  NUMERIC(10, 2),
+    sexo   sexos NOT NULL
 );
 
-CREATE TABLE SoftwareMixagem (
-    prestador INTEGER REFERENCES PrestadorServico(musico) ON DELETE CASCADE,
-    software VARCHAR(30),
+CREATE TABLE Software_Mixagem (
+    prestador INTEGER REFERENCES Prestador_Servico(musico) ON DELETE CASCADE,
+    software  VARCHAR(50),
 
-    CONSTRAINT PK_SoftwareMixagem PRIMARY KEY(prestador, software)
+    CONSTRAINT Software_Mixagem_pk PRIMARY KEY(prestador, software)
 );
 
-CREATE TABLE SoftwareEdicao (
-    prestador INTEGER REFERENCES PrestadorServico(musico) ON DELETE CASCADE,
-    software VARCHAR(30),
+CREATE TABLE Software_Edicao (
+    prestador INTEGER REFERENCES Prestador_Servico(musico) ON DELETE CASCADE,
+    software  VARCHAR(50),
 
-    CONSTRAINT PK_SoftwareEdicao PRIMARY KEY(prestador, software)
+    CONSTRAINT Software_Edicao_pk PRIMARY KEY(prestador, software)
 );
 
-CREATE TABLE ClasseVoz (
-    prestador INTEGER REFERENCES PrestadorServico(musico) ON DELETE CASCADE,
-    classe VARCHAR(30),
+CREATE TYPE classes AS ENUM('Baixo', 'Baritono', 'Tenor', 'Contralto', 'Mezzo Soprano', 'Soprano');
 
-    CONSTRAINT PK_SoftwareClasse PRIMARY KEY(prestador, classe)
+CREATE TABLE Classe_Voz (
+    prestador INTEGER REFERENCES Prestador_Servico(musico) ON DELETE CASCADE,
+    classe    classes,
+
+    CONSTRAINT Software_Classe_pk PRIMARY KEY(prestador, classe)
 );
 
-CREATE TABLE IdiomaPrestador (
-    prestador INTEGER REFERENCES PrestadorServico(musico) ON DELETE CASCADE,
-    idioma VARCHAR(30),
+CREATE TABLE Idioma_Prestador (
+    prestador INTEGER REFERENCES Prestador_Servico(musico) ON DELETE CASCADE,
+    idioma    VARCHAR(50),
 
-    CONSTRAINT PK_IdiomaPrestador PRIMARY KEY(prestador, idioma)
+    CONSTRAINT Idioma_Prestador_pk PRIMARY KEY(prestador, idioma)
 );
 
 CREATE TABLE Equipamento (
-    prestador INTEGER REFERENCES PrestadorServico(musico) ON DELETE CASCADE,
-    equipamento VARCHAR(30),
+    prestador   INTEGER REFERENCES Prestador_Servico(musico) ON DELETE CASCADE,
+    equipamento VARCHAR(50),
 
-    CONSTRAINT PK_Equipamento PRIMARY KEY(prestador, equipamento)
+    CONSTRAINT Equipamento_pk PRIMARY KEY(prestador, equipamento)
 );
 
-CREATE TABLE InstrumentoPrestador (
-    prestador INTEGER REFERENCES PrestadorServico(musico) ON DELETE CASCADE,
-    instrumento VARCHAR(30),
+CREATE TABLE Instrumento_Prestador (
+    prestador   INTEGER REFERENCES Prestador_Servico(musico) ON DELETE CASCADE,
+    instrumento VARCHAR(50),
 
-    CONSTRAINT PK_InstrumentoPrestador PRIMARY KEY(prestador, instrumento)
+    CONSTRAINT Instrumento_Prestador_pk PRIMARY KEY(prestador, instrumento)
 );
 
 
@@ -157,9 +158,9 @@ CREATE TABLE InstrumentoPrestador (
 
 CREATE TABLE Contrato (
     id        SERIAL PRIMARY KEY,
-    produtor  INTEGER NOT NULL REFERENCES Produtor(musico),
-    prestador INTEGER NOT NULL REFERENCES PrestadorServico(musico) CHECK(prestador != produtor),
-    "data"    DATE DEFAULT CURRENT_DATE CHECK("data" <= CURRENT_DATE),
+    produtor  INTEGER REFERENCES Produtor(musico),
+    prestador INTEGER REFERENCES Prestador_Servico(musico) CHECK(prestador != produtor),
+    "data"    TIMESTAMP DEFAULT NOW() CHECK("data" <= NOW()),
     valor     NUMERIC(10, 2) NOT NULL,
     duracao   INTERVAL NOT NULL,
     descricao TEXT NOT NULL,
@@ -171,11 +172,11 @@ CREATE TABLE Contrato (
 -- Licença
 
 CREATE TABLE Licenca (
-    nome VARCHAR(30) PRIMARY KEY,
-    criador INTEGER NOT NULL REFERENCES Administrador(usuario),
-    resumo TEXT NOT NULL,
+    nome      VARCHAR(50) PRIMARY KEY,
+    criador   INTEGER NOT NULL REFERENCES Administrador(usuario),
+    resumo    TEXT NOT NULL,
     descricao TEXT NOT NULL,
-    ativa BOOLEAN NOT NULL
+    ativa     BOOLEAN DEFAULT TRUE NOT NULL
 );
 
 
@@ -189,89 +190,91 @@ CREATE TABLE Produto (
     nome      VARCHAR(50) NOT NULL,
     tipo      tipos NOT NULL,
     preco     NUMERIC(10, 2),
-    avaliacao real
+    avaliacao NUMERIC(3, 2) CHECK(avaliacao BETWEEN 0 AND 5)
 );
 
-CREATE TABLE ProdutoLicenciado (
-    licenca VARCHAR(30) REFERENCES Licenca(nome),
-    produto INTEGER REFERENCES Produto(codigo),
-    
-    CONSTRAINT PK_ProdutoLicenciado PRIMARY KEY(licenca, produto)
+CREATE TABLE Produto_Licenciado (
+    licenca VARCHAR(50) REFERENCES Licenca(nome) ON DELETE CASCADE,
+    produto INTEGER REFERENCES Produto(codigo) ON DELETE CASCADE,
+
+    CONSTRAINT Produto_Licenciado_pk PRIMARY KEY(licenca, produto)
 );
 
 
 -- Faixa de Áudio
 
-CREATE TABLE FaixaAudio (
-    produto SERIAL PRIMARY KEY,
-    contrato INTEGER REFERENCES Contrato(id) NOT NULL,
-    preco NUMERIC (10, 2) NOT NULL,
-    duracao INTEGER NOT NULL
+CREATE TABLE Faixa_Audio (
+    produto  INTEGER PRIMARY KEY REFERENCES Produto(codigo) ON DELETE CASCADE,
+    contrato INTEGER NOT NULL REFERENCES Contrato(id),
+    preco    NUMERIC (10, 2) NOT NULL,
+    duracao  INTERVAL NOT NULL
 );
 
-CREATE TABLE GeneroFaixa (
-    faixa_audio INTEGER REFERENCES FaixaAudio(produto),
+CREATE TABLE Genero_Faixa (
+    faixa  INTEGER REFERENCES Faixa_Audio(produto) ON DELETE CASCADE,
     genero VARCHAR(50),
-    
-    CONSTRAINT GeneroFaixa_pk PRIMARY KEY(faixa_audio, genero)
+
+    CONSTRAINT Genero_Faixa_pk PRIMARY KEY(faixa, genero)
 );
 
 
-CREATE TABLE IdiomaFaixa (
-    faixa_audio INTEGER REFERENCES FaixaAudio(produto),
-    idioma VARCHAR(50) NOT NULL,
-    CONSTRAINT IdiomaFaixa_pk PRIMARY KEY(faixa_audio, idioma)
+CREATE TABLE Idioma_Faixa (
+    faixa  INTEGER REFERENCES Faixa_Audio(produto) ON DELETE CASCADE,
+    idioma VARCHAR(50),
+
+    CONSTRAINT Idioma_Faixa_pk PRIMARY KEY(faixa, idioma)
 );
 
-CREATE TABLE InstrumentoFaixa (
-    faixa_audio INTEGER REFERENCES FaixaAudio(produto),
-    instrumento VARCHAR(50) NOT NULL,
-    
-    CONSTRAINT InstrumentoFaixa_pk PRIMARY KEY(faixa_audio, instrumento)
+CREATE TABLE Instrumento_Faixa (
+    faixa       INTEGER REFERENCES Faixa_Audio(produto) ON DELETE CASCADE,
+    instrumento VARCHAR(50),
+
+    CONSTRAINT Instrumento_Faixa_pk PRIMARY KEY(faixa, instrumento)
 );
+
 
 -- Bundle
 
 CREATE TABLE Bundle (
-    produto     SERIAL PRIMARY KEY REFERENCES Produto(codigo),
-    desconto    NUMERIC(5,2),
-    preco_total NUMERIC (10,2) NOT NULL
+    produto  INTEGER PRIMARY KEY REFERENCES Produto(codigo) ON DELETE CASCADE,
+    desconto NUMERIC(10, 2) NOT NULL CHECk(desconto BETWEEN 0 AND 100),
+    preco    NUMERIC (10, 2) NOT NULL
 );
 
-CREATE TABLE ProdutorBundle (
-    produtor   INTEGER REFERENCES Produtor(musico),
-    bundle     INTEGER REFERENCES Bundle(produto),
+CREATE TABLE Produtor_Bundle (
+    produtor INTEGER REFERENCES Produtor(musico) ON DELETE CASCADE,
+    bundle   INTEGER REFERENCES Bundle(produto) ON DELETE CASCADE,
 
-    CONSTRAINT ProdutorBundle_pk PRIMARY KEY(produtor, bundle)
+    CONSTRAINT Produtor_Bundle_pk PRIMARY KEY(produtor, bundle)
 );
 
-CREATE TABLE BundleFaixa (
-    bundle    INTEGER REFERENCES Bundle(produto),
-    faixa_audio    INTEGER REFERENCES FaixaAudio(produto),
+CREATE TABLE Bundle_Faixa (
+    bundle INTEGER REFERENCES Bundle(produto) ON DELETE CASCADE,
+    faixa  INTEGER REFERENCES Faixa_Audio(produto) ON DELETE CASCADE,
 
-    CONSTRAINT BundleFaixa_pk PRIMARY KEY(bundle, faixa_audio)
+    CONSTRAINT Bundle_Faixa_pk PRIMARY KEY(bundle, faixa)
 );
 
 
 -- Compra
-CREATE TYPE formas_pagamento AS ENUM('CREDITO', 'DEBITO', 'PIX');
+
+CREATE TYPE formas AS ENUM('Cartao de Credito', 'Cartao de Debito', 'Boleto', 'Pix');
 
 CREATE TABLE Compra (
-    nota_fiscal VARCHAR(44) PRIMARY KEY,
-    comprador INTEGER NOT NULL REFERENCES Usuario(id) ON DELETE SET NULL,
-    "data" TIMESTAMP NOT NULL,
-    forma_pagamento formas_pagamento NOT NULL,
-    valor NUMERIC(10, 2) NOT NULL,
-    avaliacao REAL,
-    comentario TEXT
+    nota_fiscal NUMERIC(14) PRIMARY KEY,
+    comprador   INTEGER NOT NULL REFERENCES Usuario(id),
+    "data"      TIMESTAMP DEFAULT NOW() NOT NULL,
+    forma       formas NOT NULL,
+    valor       NUMERIC(10, 2) NOT NULL,
+    avaliacao   NUMERIC(5, 2) CHECK(avaliacao BETWEEN 0 AND 5),
+    comentario  TEXT
 );
 
-CREATE TABLE CompraProduto (
-    compra VARCHAR(44) REFERENCES Compra(nota_fiscal) ON DELETE CASCADE,
-    licenca VARCHAR(30),
+CREATE TABLE Compra_Produto (
+    compra  NUMERIC(14) REFERENCES Compra(nota_fiscal) ON DELETE CASCADE,
+    licenca VARCHAR(50),
     produto INTEGER,
-    
-    CONSTRAINT FK_LicencaProduto FOREIGN KEY (licenca, produto) REFERENCES ProdutoLicenciado(licenca, produto),
-    CONSTRAINT PK_CompraProduto UNIQUE(compra, licenca, produto)
-);
 
+    CONSTRAINT Compra_Produto_pk PRIMARY KEY(compra, licenca, produto),
+    CONSTRAINT Compra_Produto_fk FOREIGN KEY (licenca, produto) REFERENCES Produto_Licenciado(licenca, produto)
+);
