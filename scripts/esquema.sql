@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS
     Usuario, Cartao, Administrador, Musico, Genero_Musico, Formacao, Portfolio, Experiencia, Servico, Produtor, Prestador_Servico, Software_Mixagem, Software_Edicao,
-    Classe_Voz, Idioma_Prestador, Equipamento, Instrumento_Prestador, Contrato, Faixa_Audio, Genero_Faixa, Idioma_Faixa, Instrumento_Faixa, Bundle, Produtor_Bundle,
-    Bundle_Faixa, Licenca, Produto, Produto_Licenciado, Compra, Compra_Produto
+    Classe_Voz, Idioma_Vocalista, Idioma_Compositor, Equipamento, Instrumento_Prestador, Contrato, Faixa_Audio, Genero_Faixa, Idioma_Faixa, Instrumento_Faixa,
+    Faixa_Contrato, Bundle, Produtor_Bundle, Bundle_Faixa, Licenca, Produto, Produto_Licenciado, Compra, Compra_Produto
 CASCADE;
 
 DROP TYPE IF EXISTS servicos, sexos, classes, tipos, formas CASCADE;
@@ -106,8 +106,7 @@ CREATE TYPE sexos AS ENUM('Masculino', 'Feminino', 'Outro');
 
 CREATE TABLE Prestador_Servico (
     musico INTEGER PRIMARY KEY REFERENCES Musico(usuario) ON DELETE CASCADE,
-    preco  NUMERIC(10, 2),
-    sexo   sexos NOT NULL
+    sexo   sexos
 );
 
 CREATE TABLE Software_Mixagem (
@@ -133,11 +132,18 @@ CREATE TABLE Classe_Voz (
     CONSTRAINT Software_Classe_pk PRIMARY KEY(prestador, classe)
 );
 
-CREATE TABLE Idioma_Prestador (
+CREATE TABLE Idioma_Vocalista (
     prestador INTEGER REFERENCES Prestador_Servico(musico) ON DELETE CASCADE,
     idioma    VARCHAR(50),
 
-    CONSTRAINT Idioma_Prestador_pk PRIMARY KEY(prestador, idioma)
+    CONSTRAINT Idioma_Vocalista_pk PRIMARY KEY(prestador, idioma)
+);
+
+CREATE TABLE Idioma_Compositor (
+    prestador INTEGER REFERENCES Prestador_Servico(musico) ON DELETE CASCADE,
+    idioma    VARCHAR(50),
+
+    CONSTRAINT Idioma_Compositor_pk PRIMARY KEY(prestador, idioma)
 );
 
 CREATE TABLE Equipamento (
@@ -190,13 +196,13 @@ CREATE TABLE Produto (
     inclusao  DATE NOT NULL DEFAULT CURRENT_DATE CHECK(inclusao <= CURRENT_DATE),
     nome      VARCHAR(50) NOT NULL,
     tipo      tipos NOT NULL,
+    preco     NUMERIC(10, 2),
     avaliacao NUMERIC(3, 2) CHECK(avaliacao BETWEEN 0 AND 5)
 );
 
 CREATE TABLE Produto_Licenciado (
     licenca VARCHAR(50) REFERENCES Licenca(nome) ON DELETE CASCADE,
     produto INTEGER REFERENCES Produto(codigo) ON DELETE CASCADE,
-    preco     NUMERIC(10, 2),
 
     CONSTRAINT Produto_Licenciado_pk PRIMARY KEY(licenca, produto)
 );
@@ -206,7 +212,6 @@ CREATE TABLE Produto_Licenciado (
 
 CREATE TABLE Faixa_Audio (
     produto  INTEGER PRIMARY KEY REFERENCES Produto(codigo) ON DELETE CASCADE,
-    preco    NUMERIC (10, 2) NOT NULL,
     duracao  INTERVAL NOT NULL
 );
 
@@ -243,8 +248,7 @@ CREATE TABLE Faixa_Contrato (
 
 CREATE TABLE Bundle (
     produto  INTEGER PRIMARY KEY REFERENCES Produto(codigo) ON DELETE CASCADE,
-    desconto NUMERIC(5, 2) NOT NULL CHECk(desconto BETWEEN 0 AND 100),
-    preco    NUMERIC (10, 2) NOT NULL
+    desconto NUMERIC(5, 2) NOT NULL CHECk(desconto BETWEEN 0 AND 100)
 );
 
 CREATE TABLE Produtor_Bundle (
@@ -269,7 +273,7 @@ CREATE TYPE formas AS ENUM('Cartao de Credito', 'Cartao de Debito', 'Boleto', 'P
 CREATE TABLE Compra (
     nota_fiscal NUMERIC(14) PRIMARY KEY,
     comprador   INTEGER NOT NULL REFERENCES Usuario(id),
-    "data"      TIMESTAMP DEFAULT NOW() NOT NULL,
+    "data"      TIMESTAMP NOT NULL DEFAULT NOW() CHECK("data" <= NOW()),
     forma       formas NOT NULL,
     valor       NUMERIC(10, 2) NOT NULL,
     avaliacao   NUMERIC(5, 2) CHECK(avaliacao BETWEEN 0 AND 5),

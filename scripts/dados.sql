@@ -22,14 +22,16 @@ INSERT INTO Administrador VALUES
 
 
 INSERT INTO Musico VALUES 
-    (3, 33333333, NULL),
+    (1, 11111111, 5.0 ),
+    (3, 33333333, 5.0 ),
     (4, 44444444, NULL),
     (5, 55555555, NULL),
-    (6, 66666666, NULL),
-    (7, 77777777, NULL),
-    (8, 88888888, NULL);
+    (6, 66666666, 5.0 ),
+    (7, 77777777, 5.0 ),
+    (8, 88888888, 5.0 );
 
 INSERT INTO Genero_Musico VALUES 
+    (1, 'Rock' ),
     (3, 'Forro'),
     (4, 'Forro'),
     (5, 'Rock' ),
@@ -39,9 +41,9 @@ INSERT INTO Genero_Musico VALUES
     (8, 'Forro');
 
 INSERT INTO Formacao VALUES 
-    (3, 'Instituto Musical',   'Produção Músical', '2019-01-01', '2022-01-01'),
+    (3, 'Instituto Musical',   'Producao Musical', '2019-01-01', '2022-01-01'),
     (6, 'Instituto Musical',   'Canto',            '2021-01-01', '2022-01-01'),
-    (8, 'Faculdade de Musica', 'Composição',       '2018-01-01', NULL        );
+    (8, 'Faculdade de Musica', 'Composicao',       '2018-01-01', NULL        );
 
 INSERT INTO Portfolio VALUES 
     (3, 'https://youtu.be/dQw4w9WgXcQ'),
@@ -70,12 +72,12 @@ INSERT INTO Produtor VALUES
 
 
 INSERT INTO Prestador_Servico VALUES 
-    (1, 100.00, 'Outro'    ),
-    (4, 400.00, 'Masculino'),
-    (5, 500.00, 'Masculino'),
-    (6, 600.00, 'Feminino' ),
-    (7, 700.00, 'Feminino' ),
-    (8, 800.00, 'Feminino' );
+    (1, 'Outro'    ),
+    (4, 'Masculino'),
+    (5, 'Masculino'),
+    (6, 'Feminino' ),
+    (7, NULL       ),
+    (8, NULL       );
 
 INSERT INTO Software_Mixagem VALUES 
     (4, 'FL Studio'),
@@ -89,9 +91,13 @@ INSERT INTO Classe_Voz VALUES
     (1,  'Tenor'        ),
     (6,  'Mezzo Soprano');
 
-INSERT INTO Idioma_Prestador VALUES 
+INSERT INTO Idioma_Vocalista VALUES 
+    (1, 'Ingles'   ),
     (6, 'Ingles'   ),
-    (6, 'Portugues'),
+    (6, 'Portugues');
+
+INSERT INTO Idioma_Compositor VALUES 
+    (8, 'Ingles'   ),
     (8, 'Portugues');
 
 INSERT INTO Equipamento VALUES 
@@ -99,98 +105,101 @@ INSERT INTO Equipamento VALUES
     (4, 'Yamaha MW10C'   );
 
 INSERT INTO Instrumento_Prestador VALUES 
-    (7, 'Sanfona'),
-    (7, 'Zabumba');
+    (7, 'Sanfona' ),
+    (7, 'Guitarra');
 
 
 INSERT INTO Contrato VALUES 
-    (DEFAULT, 3, 6, DEFAULT,      500.00, '6 mons', 'Contrato de uma vocalista para produções por 6 meses'     ),
-    (DEFAULT, 3, 7, DEFAULT,      700.00, '3 mons', 'Contrato de uma instrumentista para produções por 3 meses'),
-    (DEFAULT, 3, 8, '2022-01-01', 900.00, '1 year', 'Contrato de uma compositora para produções por 1 ano'     );
+    (DEFAULT, 1, 7, DEFAULT,      7000.00,  '3 mons', 'Contrato de um instrumentista para produções...'),
+    (DEFAULT, 3, 7, DEFAULT,      10000.00, '6 mons', 'Contrato de um instrumentista para produções...'),
+    (DEFAULT, 3, 6, DEFAULT,      6000.00,  '6 mons', 'Contrato de um vocalista para produções...'     ),
+    (DEFAULT, 3, 8, '2022-01-01', 8000.00,  '1 year', 'Contrato de um compositor para produções...'    );
 
 
 INSERT INTO Licenca VALUES 
-    ('Direitos reservados', 2, 'Comprador terá uso reservado das faixas',                     'Este contrato elenca as responsabilidades do comprador...',           DEFAULT),
-    ('Direitos divididos',  2, 'Produtor, músicos e compradores tem direito sobre as faixas', 'Este contrato elenca as responsabilidades do comprador e músicos...', DEFAULT);
+    ('Direitos reservados', 2, 'Comprador terá uso reservado das faixas',                     'Este contrato elenca as responsabilidades do comprador...',           TRUE),
+    ('Direitos divididos',  2, 'Produtor, músicos e compradores tem direito sobre as faixas', 'Este contrato elenca as responsabilidades do comprador e músicos...', TRUE);
 
 
 INSERT INTO Produto VALUES 
-    (DEFAULT, DEFAULT, 'Melhores Xotes',          'Bundle',         5),
-    (DEFAULT, DEFAULT, 'Melhores do Forró',       'Bundle',         5),
-    (DEFAULT, DEFAULT, 'Xote da Alegria',         'Faixa de Audio', 5),
-    (DEFAULT, DEFAULT, 'Rindo a Toa (A capella)', 'Faixa de Audio', 5),
-    (DEFAULT, DEFAULT, 'Xote das Meninas',        'Faixa de Audio', 5),
-    (DEFAULT, DEFAULT, 'Asas (Instrumental)',     'Faixa de Audio', 5);
+    (DEFAULT, DEFAULT, 'Xote da Alegria',       'Faixa de Audio', 100.00, NULL),
+    (DEFAULT, DEFAULT, 'Xote das Meninas',      'Faixa de Audio', 200.00, NULL),
+    (DEFAULT, DEFAULT, 'Rindo a Toa A capella', 'Faixa de Audio', 300.00, 5.0 ),
+    (DEFAULT, DEFAULT, 'Asas Instrumental',     'Faixa de Audio', 400.00, 5.0 ),
+    (DEFAULT, DEFAULT, 'Melhores Xotes',        'Bundle',         270.00, NULL),
+    (DEFAULT, DEFAULT, 'Melhores do Forró',     'Bundle',         600.00, NULL);
 
 INSERT INTO Produto_Licenciado VALUES 
-    ('Direitos reservados', 1, 10000.00),
-    ('Direitos divididos',  1, 2000.00 ),
-    ('Direitos reservados', 2, 1200.00 ),
-    ('Direitos divididos',  2, 350.00  ),
-    ('Direitos divididos',  4, 200.00  ),
-    ('Direitos divididos',  5, 300.00  );
+    ('Direitos reservados', 1),
+    ('Direitos divididos',  1),
+    ('Direitos reservados', 3),
+    ('Direitos divididos',  4),
+    ('Direitos divididos',  5),
+    ('Direitos divididos',  6);
 
 
 INSERT INTO Faixa_Audio VALUES 
-    (3, 100.00, '2 mins'        ),
-    (4, 200.00, '3 mins 30 secs'),
-    (5, 300.00, '2 mins 40 secs'),
-    (6, 400.00, '3 mins'        );
+    (1, '2 mins'        ),
+    (2, '3 mins 30 secs'),
+    (3, '2 mins 40 secs'),
+    (4, '3 mins'        );
     
 INSERT INTO Genero_Faixa VALUES 
+    (1, 'Forró'),
+    (2, 'Forró'),
     (3, 'Forró'),
     (4, 'Forró'),
-    (5, 'Forró'),
-    (6, 'Forró');
+    (4, 'Rock' );
 
 INSERT INTO Idioma_Faixa VALUES 
-    (3, 'Português'),
-    (4, 'Português'),
-    (5, 'Português'),
+    (1, 'Português'),
+    (2, 'Português'),
+    (3, 'Português');
 
 INSERT INTO Instrumento_Faixa VALUES 
-    (3, 'Sanfona'),
-    (5, 'Sanfona'),
-    (6, 'Zabumba'),
-    (6, 'Sanfona'),
-    (6, 'Zabumba');
+    (1, 'Sanfona' ),
+    (2, 'Sanfona' ),
+    (4, 'Sanfona' ),
+    (4, 'Guitarra');
     
 INSERT INTO Faixa_Contrato VALUES
-    (3, 1),
-    (3, 2),
-    (3, 3),
-    (4, 1),
-    (4, 3),
-    (5, 1),
-    (5, 2),
-    (5, 3),
-    (6, 2);
-
-INSERT INTO Bundle VALUES 
-    (1, 30, 400.00 );
-    (2, 40, 1000.00);
-
-INSERT INTO Produtor_Bundle VALUES 
-    (3, 1),
-    (3, 2);
-
-INSERT INTO Bundle_Faixa VALUES 
-    (1, 1),
+    (1, 2),
     (1, 3),
-    (2, 1),
+    (1, 4),
     (2, 2),
     (2, 3),
-    (2, 4);
+    (2, 4),
+    (3, 3),
+    (3, 4),
+    (4, 1);
+
+
+INSERT INTO Bundle VALUES 
+    (5, 30.00),
+    (6, 40.00);
+
+INSERT INTO Produtor_Bundle VALUES 
+    (3, 5),
+    (3, 6),
+    (1, 6);
+
+INSERT INTO Bundle_Faixa VALUES 
+    (5, 1),
+    (5, 2),
+    (6, 1),
+    (6, 2),
+    (6, 3),
+    (6, 4);
 
 
 INSERT INTO Compra VALUES
-    (12345678901234, 1, DEFAULT, 'Cartao de Debito', 1000.00, 5.0, 'Produto muito bom, ótimas músicas'),
-    (43210987654321, 1, DEFAULT, 'Cartao de Debito', 500.00,  NULL, NULL);
+    (11111111111111, 1, DEFAULT, 'Cartao de Credito', 700.00, 5.0, 'Produtos muito bons, ótimas músicas'),
+    (22222222222222, 1, DEFAULT, 'Boleto',            270.00, NULL, NULL                                );
 
 INSERT INTO Compra_Produto VALUES 
-    (12345678901234, 'Direitos reservados', 1),
-    (12345678901234, 'Direitos divididos',  4),
-    (12345678901234, 'Direitos divididos',  5);
+    (11111111111111, 'Direitos reservados', 3),
+    (11111111111111, 'Direitos divididos',  4),
+    (22222222222222, 'Direitos divididos',  5);
 
 
 COMMIT;
