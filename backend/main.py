@@ -7,7 +7,7 @@ from decouple import config
 try:
     # Conecta ao Banco de Dados
     print("Conectando com PostgreSQL...")
-    conn = psycopg2.connect(host = config("HOST"), database = config("DATABASE"), user = config("USER"), password = config("PASSWORD"))
+    conn = psycopg2.connect(host = config("HOST"), database = config("DATABASE"), user = config("USERNAME"), password = config("PASSWORD"))
     
     # Imprime a Versão do Banco de Dados
     cur = conn.cursor()
