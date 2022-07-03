@@ -196,7 +196,7 @@ CREATE TABLE Produto (
     inclusao  DATE NOT NULL DEFAULT CURRENT_DATE CHECK(inclusao <= CURRENT_DATE),
     nome      VARCHAR(50) NOT NULL,
     tipo      tipos NOT NULL,
-    preco     NUMERIC(10, 2),
+    preco     NUMERIC(10, 2) CHECK(preco >= 0),
     avaliacao NUMERIC(3, 2) CHECK(avaliacao BETWEEN 0 AND 5)
 );
 
