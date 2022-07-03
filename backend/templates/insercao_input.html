@@ -13,7 +13,10 @@
   <script>
 
     $(document).ready(function () {
-
+      var urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('error')){
+        alert(urlParams.get('error'))
+      }
       console.log("caio")
       $("#preco").inputmask({
         mask: '#{1,5}.##',
