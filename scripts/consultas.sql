@@ -26,11 +26,11 @@ ORDER BY faixas_produzidas;
 
 -- Query 03 (Outer Join, Window Functions)
 -- "Destaques do músico"
--- Para cada prestador de servico, selecionar sua faixa de aúdio mais bem avaliada caso já tenha participado de alguma,
--- Se não houver música, mantenha o campo como null. Em casos de empate selecionar a faixa de áudio mais cara
+-- Para cada prestador de servico, selecionar sua faixa de áudio mais bem avaliada, caso já tenha participado de alguma,
+-- Do contrário manter os dados da faixa de áudio como nulos. Em casos de empate selecionar a faixa de áudio mais cara
 SELECT D.musico, D.nome as nome_produto, D.avaliacao
 FROM (
-	SELECT PS.musico, P.nome, ROW_NUMBER() OVER (PARTITION BY PS.musico ORDER BY P.avaliacao DESC NULLS LAST) ranking, P.avaliacao
+	SELECT PS.musico, P.nome, ROW_NUMBER() OVER (PARTITION BY PS.musico ORDER BY P.avaliacao, P.preco DESC NULLS LAST) ranking, P.avaliacao
 	FROM prestador_servico PS
 	LEFT JOIN contrato C on PS.musico = C.prestador
 	LEFT JOIN faixa_contrato FC on C.id = FC.contrato
