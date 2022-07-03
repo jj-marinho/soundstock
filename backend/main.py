@@ -4,6 +4,7 @@ import psycopg2
 import atexit
 from decouple import config
 
+
 try:
     # Conecta ao Banco de Dados
     print("Conectando com PostgreSQL...")
@@ -14,9 +15,9 @@ try:
     cur.execute("SELECT version()")
     print(f"Versão: {cur.fetchone()}")
 
-except (Exception, psycopg2.DatabaseError) as error:
+except (Exception, psycopg2.DatabaseError) as erro:
     conn = None
-    print(error)
+    print(erro)
 
 def fecha_conexao():
     if conn is not None:
@@ -34,21 +35,17 @@ def home():
     cur.execute(busca_faixa())
     recset = cur.fetchall()
     returnData = ""
-    # faz um loop entre todos os resultados e vai juntando em itens de uma lista para o html
     for rec in recset:
         returnData += f'<li class="list-group-item">Nome: {rec[1]}<br>Preço: R${rec[2]}<br>Avaliação: {rec[3]}<br>Duração: {rec[5]}</li>'
 
     return render_template('consulta_output.html', message=returnData)
 
 
-# mostra a pagina de inserir dados 
 @app.route("/nova-faixa")
 def novaFaixa():    
     cur = conn.cursor()
     cur.execute(busca_contrato())
     recset = cur.fetchall()
-    returnData = ""
-    # faz um loop entre todos os resultados e vai juntando em itens de uma lista para o html
     contratos = ""
     for rec in recset:
         print(rec)
@@ -62,10 +59,8 @@ def novaFaixa():
                     </div>"""
     return render_template('insercao_input.html', contratos=contratos)
 
-# recebe os dados da pagina de insercao e insere na base
 @app.route("/faixa-audio", methods=['POST'])
 def novaFaixaPost():
-    # busca os dados da requisicao e cria o sql para insercao, aqui seria necessario evitar sql injection
     print(request.form.to_dict())
     form = request.form.to_dict()
     contratos = []
@@ -87,36 +82,31 @@ def novaFaixaPost():
         if instrumento != "":
             instrumentos.append(instrumento.strip())
     nome = form['nome']
-    preco = float(form['preco'])
+    try:
+        preco = float(form['preco'])
+    except:
+        return redirect(f"/nova-faixa?error=dado invalido {form['preco']}", code=302)
     duracao = form['duracao'] + " seconds"
     
 
     print( insercao_faixa(nome, preco, duracao, contratos, generos, idiomas, instrumentos))
     cur = conn.cursor()
-    # executa o sql
-    cur.execute( insercao_faixa(nome, preco, duracao, contratos, generos, idiomas, instrumentos))
-    # comita a operacao
-    conn.commit()
+    try:
+        # executa o sql
+        cur.execute( insercao_faixa(nome, preco, duracao, contratos, generos, idiomas, instrumentos))
+        # comita a operacao
+        conn.commit()
+    except Exception as err:
+        conn.rollback()
+        print(err)
+        bs = "\n"
+        return redirect(f"/nova-faixa?error=dado invalido {str(err).split(bs)[0].split(':')[1]}", code=302)
    
-    # sql = """BEGIN
-    #         INSERT INTO Produto VALUES (...) RETURNING codigo into val_codigo;""".format(address=request.form['address'], 
-    #             description=request.form['description'], cpf=request.form['cpf'])
-
-
-    # sql = sql + "COMMIT"
-            
-    # # executa o sql
-    # cur.execute(sql)
-    # # comita a operacao
-    # conn.commit()
-
-    # redireciona para a pagina onde mostra que a insercao foi bem sucedida
     return redirect("/", code=302)
 
 # mostra todas as insercoes feitas na base
 @app.route("/busca", methods=['GET'])
 def formBuscarFaixa(): 
-
     return render_template('consulta_input.html')
 
 @app.route("/busca-resultado", methods=['POST'])
@@ -165,3 +155,5 @@ def buscarFaixa():
 if __name__ == "__main__":  
     app.run(debug = True)
     atexit.register(fecha_conexao)
+
+
