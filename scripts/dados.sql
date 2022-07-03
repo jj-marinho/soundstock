@@ -175,7 +175,7 @@ INSERT INTO Faixa_Contrato VALUES
 
 
 INSERT INTO Bundle VALUES 
-    (5, 30.00),
+    (5, 10.00),
     (6, 40.00);
 
 INSERT INTO Produtor_Bundle VALUES 
@@ -194,7 +194,7 @@ INSERT INTO Bundle_Faixa VALUES
 
 INSERT INTO Compra VALUES
     (11111111111111, 1, DEFAULT, 'Cartao de Credito', 700.00, 5.0, 'Produtos muito bons, ótimas músicas'),
-    (22222222222222, 1, DEFAULT, 'Boleto',            270.00, NULL, NULL                                );
+    (22222222222222, 2, DEFAULT, 'Boleto',            570.00, NULL, NULL                                );
 
 INSERT INTO Compra_Produto VALUES 
     (11111111111111, 'Direitos reservados', 3),
