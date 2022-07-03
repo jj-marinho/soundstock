@@ -199,6 +199,7 @@ INSERT INTO Compra VALUES
 INSERT INTO Compra_Produto VALUES 
     (11111111111111, 'Direitos reservados', 3),
     (11111111111111, 'Direitos divididos',  4),
+    (22222222222222, 'Direitos reservados', 3),
     (22222222222222, 'Direitos divididos',  5);
 
 
