@@ -100,7 +100,6 @@ CREATE TABLE Produtor (
 
 
 -- Prestador de Serviço
--- ! ideal seria ter um trigger para essas tabelas pra checar se o musico pode ser adicionado em cada uma dessas tabelas
 
 CREATE TYPE sexos AS ENUM('Masculino', 'Feminino', 'Outro');
 
