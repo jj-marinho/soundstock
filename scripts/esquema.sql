@@ -169,7 +169,7 @@ CREATE TABLE Contrato (
     prestador INTEGER REFERENCES Prestador_Servico(musico) CHECK(prestador != produtor),
     "data"    TIMESTAMP DEFAULT NOW() CHECK("data" <= NOW()),
     valor     NUMERIC(10, 2) NOT NULL,
-    duracao   INTERVAL NOT NULL,
+    duracao   INTERVAL NOT NULL CHECK(duracao > INTERVAL '0'),
     descricao TEXT NOT NULL,
     
     CONSTRAINT Contrato_un UNIQUE(produtor, prestador, "data")
@@ -212,7 +212,7 @@ CREATE TABLE Produto_Licenciado (
 
 CREATE TABLE Faixa_Audio (
     produto  INTEGER PRIMARY KEY REFERENCES Produto(codigo) ON DELETE CASCADE,
-    duracao  INTERVAL NOT NULL
+    duracao  INTERVAL NOT NULL CHECK(duracao > INTERVAL '0')
 );
 
 CREATE TABLE Genero_Faixa (

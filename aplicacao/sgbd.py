@@ -1,4 +1,5 @@
 # O ID do Produtor foi fixado como sendo 3 nas queries para simular o fato de estar logado como tal Produtor.
+PRODUTOR = 3
 
 
 def insercao_faixa(nome, preco, duracao, contratos, generos, idiomas, instrumentos):
@@ -23,7 +24,7 @@ def busca_faixa(nome = "", preco = (0, 99999999.99), duracao = ("0 secs", "17800
             JOIN Faixa_Contrato FC ON C.id = FC.contrato
             JOIN Faixa_Audio    F  ON FC.faixa = F.produto
             JOIN Produto        P  ON F.produto = P.codigo
-        WHERE C.produtor = 3
+        WHERE C.produtor = {PRODUTOR}
             AND P.nome ILIKE '%{nome}%'
             AND P.preco BETWEEN {preco[0] :.2f} AND {preco[1] :.2f}
             AND F.duracao BETWEEN INTERVAL '{duracao[0]}' AND INTERVAL '{duracao[1]}'
@@ -32,9 +33,9 @@ def busca_faixa(nome = "", preco = (0, 99999999.99), duracao = ("0 secs", "17800
 
 
 def busca_contrato():
-    return """
+    return f"""
         SELECT U.nome, C.id, C.valor, C.descricao
             FROM Contrato C
             JOIN Usuario U ON C.prestador = U.id
-        WHERE C.produtor = 3 AND C."data" + C.duracao > NOW();
+        WHERE C.produtor = {PRODUTOR} AND C."data" + C.duracao > NOW();
     """

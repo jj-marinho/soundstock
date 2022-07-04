@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        crossorigin="anonymous"
+    >
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js"></script>
+    
+    <title> SoundStock </title>
+</head>
+
+<body>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"
+    ></script>
+
+    <div style="width: 100vw; height: 100vh; background: linear-gradient(#160052, #4a00ac);">
+        <div class="container position-absolute top-50 start-50 translate-middle">
+            <div class="row justify-content-md-center">
+                <div class="col-md-auto card" style="width: 800px; padding: 30px">
+                    <form class="d-flex flex-column justify-content-center" action="busca" method="POST">
+                        <div class="mb-3 d-flex  flex-column justify-content-center"> <h3 class="text-center"> Buscar faixas de áudio </h3> </div>
+
+                        <div class="mb-3 d-flex  flex-row justify-content-around">
+                            <div class="mb-3 d-flex  flex-column justify-content-center" style="width: 300px;">
+                                <label for="nome" class="form-label text-center"> Nome </label>
+                                <input class="form-control" id="nome" name="nome"></input>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 d-flex flex-row justify-content-around">
+                            <div class="mb-3 d-flex flex-column justify-content-center">
+                                <label for="preco-min" class="form-label text-center"> Preço mínimo </label>
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend"> <div class="input-group-text"> R$ </div> </div>
+                                    <input class="form-control" type="number" value="0" min="0" max="99999999" id="preco-min" name="preco-min"></input>
+                                </div>
+                                <small id="preco-minHelpBlock" class="form-text text-muted"> Formato de XX.XX </small>
+                            </div>
+
+                            <div class="mb-3 d-flex flex-column justify-content-center">
+                                <label for="preco-max" class="form-label text-center"> Preço máximo </label>
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend"> <div class="input-group-text"> R$ </div> </div>
+                                    <input class="form-control" type="number" value="99999999" min="0" max="99999999" id="preco-max" name="preco-max"></input>
+                                </div>
+                                <small id="preco-maxHelpBlock" class="form-text text-muted"> Formato de XX.XX </small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 d-flex  flex-row justify-content-around">
+                            <div class="mb-3 d-flex  flex-column justify-content-center">
+                                <label for="duracao-min" class="form-label text-center"> Duração mínima </label>
+                                <input class="form-control" type="number" value="0" min="0" max="178000000" id="duracao-min" name="duracao-min"></input>
+                                <small id="duracao-minHelpBlock" class="form-text text-muted"> Em segundos </small>
+                            </div>
+                            <div class="mb-3 d-flex  flex-column justify-content-center">
+                                <label for="duracao-max" class="form-label text-center"> Duração máxima </label>
+                                <input class="form-control" type="number" value="178000000" min="0" max="178000000" id="duracao-max" name="duracao-max"></input>
+                                <small id="duracao-maxHelpBlock" class="form-text text-muted"> Em segundos </small>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary"> Buscar </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
